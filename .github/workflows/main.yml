@@ -23,8 +23,5 @@ jobs:
     - name: Run Tests
       run: npm test
 
-    - name: Run App (Demo)
-      run: node app.js
-
     - name: Build Docker Image
       run: docker build -t ci-cd-app .
