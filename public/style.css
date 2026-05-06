@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap');
 
 :root {
@@ -698,4 +699,115 @@ ul#taskList li span {
   .sidebar { display: none; }
   .main { padding: 20px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+=======
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+/* ===== LOGIN PAGE ONLY ===== */
+
+.login-page {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    width: 300px;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.login-container input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.login-container button {
+    width: 100%;
+}
+/* Layout */
+.layout {
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 10px 0;
+    padding: 8px;
+    background: #34495e;
+}
+
+.sidebar a:hover {
+    background: #1abc9c;
+}
+
+/* Main */
+.main {
+    flex: 1;
+    padding: 30px;
+    background: #ecf0f1;
+}
+
+/* Task Box */
+.task-box {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    width: 250px;
+}
+
+button {
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Task List */
+ul {
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    background: white;
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    border-left: 5px solid #3498db;
+}
+
+/* Completed */
+.completed {
+    text-decoration: line-through;
+    color: gray;
+    border-left: 5px solid green;
+}
+
+/* Buttons */
+.task-actions button {
+    margin-left: 5px;
+>>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
 }

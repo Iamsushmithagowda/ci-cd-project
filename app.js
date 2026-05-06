@@ -124,6 +124,10 @@ const server = http.createServer((req, res) => {
     });
 });
 
+<<<<<<< HEAD
 server.listen(3000, '0.0.0.0',() => {
+=======
+server.listen(3000, () => {
+>>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
     console.log("Server running at http://localhost:3000");
 });

@@ -1,15 +1,23 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tasks — DevOps TM</title>
   <link rel="stylesheet" href="style.css">
+=======
+<html>
+<head>
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+>>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
 </head>
 <body>
 
 <div class="layout">
 
+<<<<<<< HEAD
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-header">
@@ -123,5 +131,31 @@ const observer = new MutationObserver(() => {
 });
 observer.observe(document.getElementById('taskList'), { childList: true });
 </script>
+=======
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Task Manager</h2>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/tasks">Tasks</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <h2>Task Management</h2>
+
+        <div class="task-box">
+            <input type="text" id="taskInput" placeholder="Enter task">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+
+        <ul id="taskList"></ul>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+>>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
 </body>
 </html>
