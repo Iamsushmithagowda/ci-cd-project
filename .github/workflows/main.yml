@@ -46,4 +46,4 @@ jobs:
 
     # 9. Stop container
     - name: Stop container
-      run: docker ps -q --filter ancestor=ci-cd-project | xargs docker stop
+      run: docker ps -q --filter ancestor=ci-cd-app | xargs docker stop
