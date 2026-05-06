@@ -24,11 +24,11 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # 4. Start server (IMPORTANT)
+    # 4. Start server (for API test)
     - name: Start server
       run: node app.js &
 
-    # 5. Wait for server to start
+    # 5. Wait for server
     - name: Wait for server
       run: sleep 3
 
@@ -38,12 +38,12 @@ jobs:
 
     # 7. Build Docker image
     - name: Build Docker Image
-      run: docker build -t task-manager-app .
+      run: docker build -t ci-cd-app .
 
-    # 8. Run container
+    # 8. Run container (FIXED PORT)
     - name: Run Docker Container
-      run: docker run -d -p 3000:3000 task-manager-app
+      run: docker run -d -p 3001:3000 ci-cd-app
 
-    # 9. Stop container
+    # 9. Stop container (FIXED NAME)
     - name: Stop container
-      run: docker ps -q --filter ancestor=ci-cd-app | xargs docker stop
+      run: docker ps -q --filter ancestor=ci-cd-app | xargs docker stop || true
