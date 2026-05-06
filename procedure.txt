@@ -1,0 +1,71 @@
+What CI/CD is doing for you
+
+Your setup with GitHub Actions does this automatically:
+
+CI (Continuous Integration)
+Every time you push code:
+installs dependencies
+runs tests
+checks if code is broken
+
+
+CD (Continuous Deployment)
+builds Docker image
+runs container
+(optionally deploys app)
+
+👉 Scenario: You updated frontend (HTML/CSS/JS)
+
+Example:
+
+changed tasks.html
+updated style.css
+edited script.js
+✅ STEP-BY-STEP CI/CD FLOW
+🟡 STEP 1: Make changes locally
+
+You edit code in VS Code.
+
+🟡 STEP 2: Test locally (optional but good practice)
+node app.js
+
+OR Docker test:
+
+docker build -t ci-cd-app .
+docker run -p 3001:3000 ci-cd-app
+🟡 STEP 3: Add changes to Git
+git add .
+🟡 STEP 4: Commit changes
+git commit -m "Updated frontend UI"
+🟡 STEP 5: Push to GitHub
+git push origin main
+⚙️ WHAT HAPPENS AUTOMATICALLY (CI/CD MAGIC)
+
+Once pushed to GitHub:
+
+🔄 GitHub Actions triggers:
+✔ Downloads your code
+✔ Installs Node dependencies
+✔ Starts server
+✔ Runs test.js
+✔ Builds Docker image (ci-cd-app)
+✔ Runs container (port 3001)
+✔ Shows success/failure in Actions tab
+📊 STEP 6: Check pipeline result
+
+Go to:
+👉 GitHub repo → Actions tab
+
+You will see:
+
+🟢 green = success
+🔴 red = error
+🌍 STEP 7: Deployment (your final output)
+
+For presentation, you run:
+
+docker run -p 3001:3000 ci-cd-app
+
+Then open:
+
+http://localhost:3001

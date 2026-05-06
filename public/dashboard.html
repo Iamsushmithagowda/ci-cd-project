@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — DevOps TM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-hex"></div>
+        <div>
+          <h2>DEVOPS TM</h2>
+          <div class="sidebar-version">v2.4.1-stable</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">// NAVIGATION</div>
+      <a href="/dashboard" class="active">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/>
+          <rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/tasks">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 4h12M2 8h8M2 12h10"/>
+        </svg>
+        Tasks
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="pipeline-status">
+        <span class="pipe-dot"></span>
+        <span>Pipeline: RUNNING</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <div class="page-header">
+      <div>
+        <div class="breadcrumb">/ DASHBOARD</div>
+        <h2>Overview</h2>
+      </div>
+      <div class="header-badge">
+        <span class="status-dot" style="width:5px;height:5px;"></span>
+        LIVE
+      </div>
+    </div>
+
+    <!-- Ticker -->
+    <div class="ticker">
+      <span class="ticker-prefix">$&nbsp;pipeline</span>
+      <span class="ticker-text" id="tickerText">Fetching latest build status...</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-title">METRICS</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-value" id="totalTasks">—</div>
+        <div class="stat-sub">All tracked items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completedTasks">—</div>
+        <div class="stat-sub"><span class="up">↑ </span>Resolved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="pendingTasks">—</div>
+        <div class="stat-sub">In queue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Progress</div>
+        <div class="stat-value" id="progressPct">—</div>
+        <div class="stat-sub">Completion rate</div>
+      </div>
+    </div>
+
+    <!-- Pipeline Activity -->
+    <div class="section-title">PIPELINE ACTIVITY</div>
+    <div class="pipeline-list">
+      <div class="pipeline-item">
+        <span class="pip-status running"></span>
+        <span class="pip-name">build:production</span>
+        <span class="pip-branch">main</span>
+        <span class="pip-time">now</span>
+      </div>
+      <div class="pipeline-item">
+        <span class="pip-status success"></span>
+        <span class="pip-name">test:unit-suite</span>
+        <span class="pip-branch">feature/auth</span>
+        <span class="pip-time">3m ago</span>
+      </div>
+      <div class="pipeline-item">
+        <span class="pip-status success"></span>
+        <span class="pip-name">deploy:staging</span>
+        <span class="pip-branch">release/2.4</span>
+        <span class="pip-time">12m ago</span>
+      </div>
+      <div class="pipeline-item">
+        <span class="pip-status failed"></span>
+        <span class="pip-name">lint:code-check</span>
+        <span class="pip-branch">fix/ui-bug</span>
+        <span class="pip-time">34m ago</span>
+      </div>
+      <div class="pipeline-item">
+        <span class="pip-status pending"></span>
+        <span class="pip-name">deploy:production</span>
+        <span class="pip-branch">main</span>
+        <span class="pip-time">queued</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const tickers = [
+  "build:production running on main · 00:02:14 elapsed",
+  "3 tasks completed since last session",
+  "All health checks passing · uptime 99.97%",
+  "Next scheduled deploy: production in 28 minutes",
+  "Last commit: fix(auth): resolve token expiry edge case"
+];
+let ti = 0;
+const el = document.getElementById('tickerText');
+setInterval(() => { ti = (ti+1) % tickers.length; el.textContent = tickers[ti]; }, 4000);
+
+// Load real task stats from API
+async function loadStats() {
+  try {
+    const res = await fetch('/api/tasks');
+    const data = await res.json();
+    const total = data.length;
+    const done  = data.filter(t => t.status === 'completed').length;
+    const pend  = total - done;
+    const pct   = total ? Math.round(done/total*100) : 0;
+    document.getElementById('totalTasks').textContent     = total;
+    document.getElementById('completedTasks').textContent = done;
+    document.getElementById('pendingTasks').textContent   = pend;
+    document.getElementById('progressPct').textContent    = pct + '%';
+  } catch(e) {
+    ['totalTasks','completedTasks','pendingTasks'].forEach(id => document.getElementById(id).textContent = '0');
+    document.getElementById('progressPct').textContent = '0%';
+  }
+}
+loadStats();
+</script>
+</body>
+</html>

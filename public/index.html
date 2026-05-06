@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps Task Manager — Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+
+<div class="login-container">
+  <div class="brand">
+    <div class="brand-icon"></div>
+    <div>
+      <h2>DEVOPS TM</h2>
+      <div style="font-size:9px;color:var(--accent-cyan);letter-spacing:.12em;">CI/CD PIPELINE MANAGER</div>
+    </div>
+  </div>
+
+  <div class="subtitle">// AUTHENTICATE TO CONTINUE</div>
+
+  <div class="field-group">
+    <label>Username</label>
+    <input type="text" id="username" placeholder="admin" autocomplete="username">
+  </div>
+
+  <div class="field-group">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
+
+  <button class="login-btn" onclick="login()">ACCESS SYSTEM</button>
+
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>PIPELINE ONLINE &nbsp;·&nbsp; ALL SYSTEMS NOMINAL</span>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
