@@ -1,40 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CI/CD Project</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            margin-top: 100px;
-            background-color: #f4f4f4;
-        }
-        .box {
-            background: white;
-            padding: 20px;
-            margin: auto;
-            width: 300px;
-            border-radius: 10px;
-        }
-        button {
-            padding: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Login - Task Manager</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="login-page">
 
-<div class="box">
-    <h1>CI/CD Demo App</h1>
-    <p id="msg">Click the button</p>
-    <button onclick="changeText()">Click Me</button>
+<div class="login-container">
+    <h2>Login</h2>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
 </div>
 
-<script>
-function changeText() {
-    document.getElementById("msg").innerText = "CI/CD is working fine";
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

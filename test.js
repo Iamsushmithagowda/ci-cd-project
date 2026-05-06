@@ -1,10 +1,50 @@
-console.log("Running tests...");
+const http = require('http');
 
-// simple test example
-const result = 2 + 2;
+function testAPI() {
+    return new Promise((resolve, reject) => {
 
-if (result !== 4) {
-    throw new Error("Test failed!");
+        const options = {
+            hostname: 'localhost',
+            port: 3000,
+            path: '/api/tasks',
+            method: 'GET'
+        };
+
+        const req = http.request(options, res => {
+
+            let data = '';
+
+            res.on('data', chunk => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                try {
+                    JSON.parse(data);
+                    console.log("✅ API Test Passed");
+                    resolve();
+                } catch (err) {
+                    reject("❌ API did not return valid JSON");
+                }
+            });
+
+        });
+
+        req.on('error', err => {
+            reject("❌ Request failed: " + err.message);
+        });
+
+        req.end();
+    });
 }
 
-console.log("All tests passed!");
+// Run test
+(async () => {
+    try {
+        await testAPI();
+        process.exit(0);
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+})();

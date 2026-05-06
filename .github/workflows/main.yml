@@ -2,26 +2,48 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout code
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Use Node.js
+    # 2. Setup Node
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
 
+    # 3. Install dependencies
     - name: Install dependencies
       run: npm install
 
-    - name: Run Tests
-      run: npm test
+    # 4. Start server (IMPORTANT)
+    - name: Start server
+      run: node app.js &
 
+    # 5. Wait for server to start
+    - name: Wait for server
+      run: sleep 3
+
+    # 6. Run tests
+    - name: Run tests
+      run: node test.js
+
+    # 7. Build Docker image
     - name: Build Docker Image
-      run: docker build -t ci-cd-app .
+      run: docker build -t task-manager-app .
+
+    # 8. Run container
+    - name: Run Docker Container
+      run: docker run -d -p 3000:3000 task-manager-app
+
+    # 9. Stop container
+    - name: Stop container
+      run: docker ps -q --filter ancestor=task-manager-app | xargs docker stop
