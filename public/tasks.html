@@ -1,23 +1,15 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tasks — DevOps TM</title>
   <link rel="stylesheet" href="style.css">
-=======
-<html>
-<head>
-    <title>Task Manager</title>
-    <link rel="stylesheet" href="style.css">
->>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
 </head>
 <body>
 
 <div class="layout">
 
-<<<<<<< HEAD
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-header">
@@ -32,16 +24,16 @@
 
     <div class="sidebar-nav">
       <div class="nav-section-label">// NAVIGATION</div>
-      <a href="/dashboard">
+      <a href="javascript:void(0)" onclick="goTo('dashboard')">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/>
-          <rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/>
+          <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+          <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
         </svg>
         Dashboard
       </a>
-      <a href="/tasks" class="active">
+      <a href="javascript:void(0)" onclick="goTo('tasks')" class="active">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M2 4h12M2 8h8M2 12h10"/>
+          <path d="M2 4h12M2 8h8M2 12h10" stroke-linecap="round"/>
         </svg>
         Tasks
       </a>
@@ -68,18 +60,20 @@
 
     <!-- Add task -->
     <div class="task-box">
-      <input type="text" id="taskInput" placeholder="describe your pipeline task…" onkeydown="if(event.key==='Enter')addTask()">
+      <input type="text" id="taskInput" placeholder="describe your pipeline task…"
+        onkeydown="if(event.key==='Enter')addTask()">
       <button onclick="addTask()">+ DEPLOY TASK</button>
     </div>
 
     <!-- Filter row -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button onclick="setFilter('all')"       id="f-all"       style="padding:5px 14px;background:rgba(14,165,233,.15);color:var(--accent-cyan);border:1px solid rgba(14,165,233,.3);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;cursor:pointer;">ALL</button>
-      <button onclick="setFilter('pending')"   id="f-pending"   style="padding:5px 14px;background:transparent;color:var(--text-muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;cursor:pointer;">PENDING</button>
-      <button onclick="setFilter('completed')" id="f-completed" style="padding:5px 14px;background:transparent;color:var(--text-muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;cursor:pointer;">DONE</button>
+    <div class="filter-row">
+      <button class="filter-btn active" id="f-all"       onclick="setFilter('all')">ALL</button>
+      <button class="filter-btn"        id="f-pending"   onclick="setFilter('pending')">PENDING</button>
+      <button class="filter-btn"        id="f-completed" onclick="setFilter('completed')">DONE</button>
     </div>
 
     <ul id="taskList"></ul>
+
     <div id="emptyState" class="empty-state" style="display:none;">
       <div class="empty-icon">▣</div>
       NO TASKS IN QUEUE
@@ -90,20 +84,24 @@
 
 <script src="script.js"></script>
 <script>
+// ✅ Smart navigation — works in Docker AND Live Server
+function goTo(page) {
+  const isLiveServer = window.location.port === '5500' || window.location.port === '5501';
+  if (isLiveServer) {
+    if (page === 'dashboard') window.location.href = 'dashboard.html';
+    if (page === 'tasks')     window.location.href = 'tasks.html';
+  } else {
+    if (page === 'dashboard') window.location.href = '/dashboard';
+    if (page === 'tasks')     window.location.href = '/tasks';
+  }
+}
 let currentFilter = 'all';
+
 function setFilter(f) {
   currentFilter = f;
   ['all','pending','completed'].forEach(k => {
-    const btn = document.getElementById('f-'+k);
-    if(k === f) {
-      btn.style.background = 'rgba(14,165,233,.15)';
-      btn.style.color = 'var(--accent-cyan)';
-      btn.style.borderColor = 'rgba(14,165,233,.3)';
-    } else {
-      btn.style.background = 'transparent';
-      btn.style.color = 'var(--text-muted)';
-      btn.style.borderColor = 'var(--border)';
-    }
+    const btn = document.getElementById('f-' + k);
+    btn.classList.toggle('active', k === f);
   });
   applyFilter();
 }
@@ -112,50 +110,22 @@ function applyFilter() {
   const items = document.querySelectorAll('#taskList li');
   items.forEach(li => {
     const done = li.classList.contains('completed');
-    if (currentFilter === 'all') li.style.display = '';
+    if (currentFilter === 'all')       li.style.display = '';
     else if (currentFilter === 'pending')   li.style.display = done ? 'none' : '';
     else if (currentFilter === 'completed') li.style.display = done ? '' : 'none';
   });
 }
 
-// Patch loadTasks to update count + empty state
-const _origLoad = window.loadTasks;
-// override after script.js defines it — we hook via MutationObserver
+// Watch task list for changes to update count + empty state
 const observer = new MutationObserver(() => {
   const items = document.querySelectorAll('#taskList li');
   const count = items.length;
   const badge = document.getElementById('taskCount');
-  if(badge) badge.textContent = count + ' ITEM' + (count !== 1 ? 'S' : '');
+  if (badge) badge.textContent = count + ' ITEM' + (count !== 1 ? 'S' : '');
   document.getElementById('emptyState').style.display = count === 0 ? 'block' : 'none';
   applyFilter();
 });
 observer.observe(document.getElementById('taskList'), { childList: true });
 </script>
-=======
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Task Manager</h2>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/tasks">Tasks</a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main">
-
-        <h2>Task Management</h2>
-
-        <div class="task-box">
-            <input type="text" id="taskInput" placeholder="Enter task">
-            <button onclick="addTask()">Add Task</button>
-        </div>
-
-        <ul id="taskList"></ul>
-
-    </div>
-
-</div>
-
-<script src="script.js"></script>
->>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
 </body>
 </html>

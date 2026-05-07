@@ -24,16 +24,16 @@
 
     <div class="sidebar-nav">
       <div class="nav-section-label">// NAVIGATION</div>
-      <a href="/dashboard" class="active">
+      <a href="javascript:void(0)" onclick="goTo('dashboard')" class="active">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/>
-          <rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/>
+          <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+          <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
         </svg>
         Dashboard
       </a>
-      <a href="/tasks">
+      <a href="javascript:void(0)" onclick="goTo('tasks')">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M2 4h12M2 8h8M2 12h10"/>
+          <path d="M2 4h12M2 8h8M2 12h10" stroke-linecap="round"/>
         </svg>
         Tasks
       </a>
@@ -95,31 +95,31 @@
     <!-- Pipeline Activity -->
     <div class="section-title">PIPELINE ACTIVITY</div>
     <div class="pipeline-list">
-      <div class="pipeline-item">
+      <div class="pipeline-item" style="animation-delay:.05s">
         <span class="pip-status running"></span>
         <span class="pip-name">build:production</span>
         <span class="pip-branch">main</span>
         <span class="pip-time">now</span>
       </div>
-      <div class="pipeline-item">
+      <div class="pipeline-item" style="animation-delay:.10s">
         <span class="pip-status success"></span>
         <span class="pip-name">test:unit-suite</span>
         <span class="pip-branch">feature/auth</span>
         <span class="pip-time">3m ago</span>
       </div>
-      <div class="pipeline-item">
+      <div class="pipeline-item" style="animation-delay:.15s">
         <span class="pip-status success"></span>
         <span class="pip-name">deploy:staging</span>
         <span class="pip-branch">release/2.4</span>
         <span class="pip-time">12m ago</span>
       </div>
-      <div class="pipeline-item">
+      <div class="pipeline-item" style="animation-delay:.20s">
         <span class="pip-status failed"></span>
         <span class="pip-name">lint:code-check</span>
         <span class="pip-branch">fix/ui-bug</span>
         <span class="pip-time">34m ago</span>
       </div>
-      <div class="pipeline-item">
+      <div class="pipeline-item" style="animation-delay:.25s">
         <span class="pip-status pending"></span>
         <span class="pip-name">deploy:production</span>
         <span class="pip-branch">main</span>
@@ -131,6 +131,19 @@
 </div>
 
 <script>
+// ✅ Smart navigation — works in Docker AND Live Server
+function goTo(page) {
+  const isLiveServer = window.location.port === '5500' || window.location.port === '5501';
+  if (isLiveServer) {
+    if (page === 'dashboard') window.location.href = 'dashboard.html';
+    if (page === 'tasks')     window.location.href = 'tasks.html';
+  } else {
+    if (page === 'dashboard') window.location.href = '/dashboard';
+    if (page === 'tasks')     window.location.href = '/tasks';
+  }
+}
+
+// Ticker animation
 const tickers = [
   "build:production running on main · 00:02:14 elapsed",
   "3 tasks completed since last session",
@@ -140,7 +153,14 @@ const tickers = [
 ];
 let ti = 0;
 const el = document.getElementById('tickerText');
-setInterval(() => { ti = (ti+1) % tickers.length; el.textContent = tickers[ti]; }, 4000);
+setInterval(() => {
+  el.classList.add('fade');
+  setTimeout(() => {
+    ti = (ti + 1) % tickers.length;
+    el.textContent = tickers[ti];
+    el.classList.remove('fade');
+  }, 400);
+}, 4000);
 
 // Load real task stats from API
 async function loadStats() {
@@ -150,13 +170,14 @@ async function loadStats() {
     const total = data.length;
     const done  = data.filter(t => t.status === 'completed').length;
     const pend  = total - done;
-    const pct   = total ? Math.round(done/total*100) : 0;
+    const pct   = total ? Math.round(done / total * 100) : 0;
     document.getElementById('totalTasks').textContent     = total;
     document.getElementById('completedTasks').textContent = done;
     document.getElementById('pendingTasks').textContent   = pend;
     document.getElementById('progressPct').textContent    = pct + '%';
   } catch(e) {
-    ['totalTasks','completedTasks','pendingTasks'].forEach(id => document.getElementById(id).textContent = '0');
+    ['totalTasks','completedTasks','pendingTasks'].forEach(id =>
+      document.getElementById(id).textContent = '0');
     document.getElementById('progressPct').textContent = '0%';
   }
 }

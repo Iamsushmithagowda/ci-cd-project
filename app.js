@@ -24,13 +24,18 @@ const server = http.createServer((req, res) => {
             try {
                 const { task, status } = JSON.parse(body);
 
+                if (!task || task.trim() === '') {
+                    res.writeHead(400);
+                    return res.end("Task cannot be empty");
+                }
+
                 tasks.push({
-                    task: task,
+                    task: task.trim(),
                     status: status || "pending"
                 });
 
-                res.writeHead(200);
-                res.end("Task added");
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: "Task added" }));
 
             } catch (err) {
                 res.writeHead(400);
@@ -45,25 +50,29 @@ const server = http.createServer((req, res) => {
     if (req.url.startsWith('/api/tasks/') && req.method === 'DELETE') {
         const index = parseInt(req.url.split('/')[3]);
 
-        if (!isNaN(index) && tasks[index]) {
+        if (!isNaN(index) && index >= 0 && index < tasks.length) {
             tasks.splice(index, 1);
+            res.writeHead(200);
+            return res.end("Deleted");
         }
 
-        res.writeHead(200);
-        return res.end("Deleted");
+        res.writeHead(404);
+        return res.end("Task not found");
     }
 
     // TOGGLE status
     if (req.url.startsWith('/api/tasks/') && req.method === 'PUT') {
         const index = parseInt(req.url.split('/')[3]);
 
-        if (!isNaN(index) && tasks[index]) {
+        if (!isNaN(index) && index >= 0 && index < tasks.length) {
             tasks[index].status =
                 tasks[index].status === "pending" ? "completed" : "pending";
+            res.writeHead(200);
+            return res.end("Status updated");
         }
 
-        res.writeHead(200);
-        return res.end("Status updated");
+        res.writeHead(404);
+        return res.end("Task not found");
     }
 
     // EDIT task
@@ -77,12 +86,14 @@ const server = http.createServer((req, res) => {
                 const index = parseInt(req.url.split('/')[3]);
                 const { task } = JSON.parse(body);
 
-                if (!isNaN(index) && tasks[index]) {
-                    tasks[index].task = task;
+                if (!isNaN(index) && index >= 0 && index < tasks.length) {
+                    tasks[index].task = task.trim();
+                    res.writeHead(200);
+                    return res.end("Task updated");
                 }
 
-                res.writeHead(200);
-                res.end("Task updated");
+                res.writeHead(404);
+                res.end("Task not found");
 
             } catch (err) {
                 res.writeHead(400);
@@ -95,11 +106,17 @@ const server = http.createServer((req, res) => {
 
     // ===== STATIC FILES =====
 
+    // Fix 1: ignore favicon requests silently
+    if (req.url === '/favicon.ico') {
+        res.writeHead(204);
+        return res.end();
+    }
+
     let filePath = '';
 
-    if (req.url === '/') filePath = 'index.html';
+    if (req.url === '/')            filePath = 'index.html';
     else if (req.url === '/dashboard') filePath = 'dashboard.html';
-    else if (req.url === '/tasks') filePath = 'tasks.html';
+    else if (req.url === '/tasks')     filePath = 'tasks.html';     // Fix 2: was 'tasks.html'
     else if (req.url === '/style.css') filePath = 'style.css';
     else if (req.url === '/script.js') filePath = 'script.js';
     else {
@@ -111,23 +128,20 @@ const server = http.createServer((req, res) => {
 
     fs.readFile(fullPath, (err, data) => {
         if (err) {
-            res.writeHead(500);
-            return res.end("Error loading file");
+            console.error(`File not found: ${fullPath}`);
+            res.writeHead(404);
+            return res.end("File not found: " + filePath);
         }
 
         let contentType = 'text/html';
         if (filePath.endsWith('.css')) contentType = 'text/css';
-        if (filePath.endsWith('.js')) contentType = 'application/javascript';
+        if (filePath.endsWith('.js'))  contentType = 'application/javascript';
 
         res.writeHead(200, { 'Content-Type': contentType });
         res.end(data);
     });
 });
 
-<<<<<<< HEAD
-server.listen(3000, '0.0.0.0',() => {
-=======
-server.listen(3000, () => {
->>>>>>> 3172d79b437c1809528285b16efcac8599dd69b6
+server.listen(3000, '0.0.0.0', () => {
     console.log("Server running at http://localhost:3000");
 });

@@ -8,9 +8,13 @@
 </head>
 <body class="login-page">
 
-<div class="login-container">
+<div class="login-glow"></div>
+
+<div class="login-container" id="loginBox">
   <div class="brand">
-    <div class="brand-icon"></div>
+    <div class="brand-icon">
+      <div class="brand-icon-inner"></div>
+    </div>
     <div>
       <h2>DEVOPS TM</h2>
       <div style="font-size:9px;color:var(--accent-cyan);letter-spacing:.12em;">CI/CD PIPELINE MANAGER</div>
@@ -21,15 +25,21 @@
 
   <div class="field-group">
     <label>Username</label>
-    <input type="text" id="username" placeholder="admin" autocomplete="username">
+    <input type="text" id="username" placeholder="admin" autocomplete="username"
+      onkeydown="if(event.key==='Enter')login()">
   </div>
 
   <div class="field-group">
     <label>Password</label>
-    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter')login()">
   </div>
 
-  <button class="login-btn" onclick="login()">ACCESS SYSTEM</button>
+  <div class="error-msg" id="errorMsg">⚠ Invalid credentials. Try admin / 1234</div>
+
+  <button class="login-btn" onclick="login()">
+    ACCESS SYSTEM <span class="btn-arrow">→</span>
+  </button>
 
   <div class="status-bar">
     <span class="status-dot"></span>
@@ -37,6 +47,31 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("errorMsg");
+  const box = document.getElementById("loginBox");
+
+  if (username === "admin" && password === "1234") {
+    // ✅ FIX: Redirect to /dashboard after successful login
+    errorMsg.classList.remove("show");
+    const btn = document.querySelector(".login-btn");
+    btn.textContent = "AUTHENTICATING...";
+    btn.style.opacity = ".7";
+    btn.style.cursor = "not-allowed";
+    setTimeout(() => {
+      window.location.href = "/dashboard";
+    }, 600);
+  } else {
+    // Show error, shake the box
+    errorMsg.classList.add("show");
+    box.style.animation = "none";
+    void box.offsetWidth; // reflow
+    box.style.animation = "shake .4s ease";
+  }
+}
+</script>
 </body>
 </html>

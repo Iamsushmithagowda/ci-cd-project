@@ -36,44 +36,34 @@ async function loadTasks() {
 
             const li = document.createElement("li");
 
-            // Apply completed style
             if (taskObj.status === "completed") {
                 li.classList.add("completed");
             }
 
-            // Task text
             const span = document.createElement("span");
             span.textContent = taskObj.task;
 
-            // Actions container
             const actions = document.createElement("div");
             actions.className = "task-actions";
 
-            // Toggle button
             const toggleBtn = document.createElement("button");
-            toggleBtn.textContent =
-                taskObj.status === "pending" ? "Done" : "Undo";
+            toggleBtn.textContent = taskObj.status === "pending" ? "Done" : "Undo";
             toggleBtn.onclick = () => toggleStatus(index);
 
-            // Edit button
             const editBtn = document.createElement("button");
             editBtn.textContent = "Edit";
             editBtn.onclick = () => editTask(index, taskObj.task);
 
-            // Delete button
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete";
             deleteBtn.onclick = () => deleteTask(index);
 
-            // Append buttons
             actions.appendChild(toggleBtn);
             actions.appendChild(editBtn);
             actions.appendChild(deleteBtn);
 
-            // Append elements
             li.appendChild(span);
             li.appendChild(actions);
-
             list.appendChild(li);
         });
 
@@ -85,12 +75,8 @@ async function loadTasks() {
 // ===== TOGGLE STATUS =====
 async function toggleStatus(index) {
     try {
-        await fetch(`/api/tasks/${index}`, {
-            method: 'PUT'
-        });
-
+        await fetch(`/api/tasks/${index}`, { method: 'PUT' });
         loadTasks();
-
     } catch (err) {
         console.error("Error updating status:", err);
     }
@@ -99,12 +85,8 @@ async function toggleStatus(index) {
 // ===== DELETE TASK =====
 async function deleteTask(index) {
     try {
-        await fetch(`/api/tasks/${index}`, {
-            method: 'DELETE'
-        });
-
+        await fetch(`/api/tasks/${index}`, { method: 'DELETE' });
         loadTasks();
-
     } catch (err) {
         console.error("Error deleting task:", err);
     }
@@ -113,7 +95,6 @@ async function deleteTask(index) {
 // ===== EDIT TASK =====
 async function editTask(index, oldText) {
     const newTask = prompt("Edit task:", oldText);
-
     if (!newTask || newTask.trim() === '') return;
 
     try {
@@ -122,23 +103,9 @@ async function editTask(index, oldText) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ task: newTask.trim() })
         });
-
         loadTasks();
-
     } catch (err) {
         console.error("Error editing task:", err);
-    }
-}
-
-// ===== LOGIN =====
-function login() {
-    const username = document.getElementById("username")?.value;
-    const password = document.getElementById("password")?.value;
-
-    if (username === "admin" && password === "1234") {
-        window.location.href = "/dashboard";
-    } else {
-        alert("Invalid credentials");
     }
 }
 
