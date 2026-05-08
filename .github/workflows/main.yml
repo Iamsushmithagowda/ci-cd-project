@@ -24,13 +24,22 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    # 4. Start server (for API test)
+    # 4. Start server in background
     - name: Start server
       run: node app.js &
 
-    # 5. Wait for server
+    # 5. Wait until server is actually ready (retry loop)
     - name: Wait for server
-      run: sleep 3
+      run: |
+        echo "Waiting for server to be ready..."
+        for i in {1..15}; do
+          if curl -s http://127.0.0.1:3000/api/tasks > /dev/null; then
+            echo "Server is up!"
+            break
+          fi
+          echo "Attempt $i: server not ready yet, waiting..."
+          sleep 2
+        done
 
     # 6. Run tests
     - name: Run tests
@@ -40,10 +49,10 @@ jobs:
     - name: Build Docker Image
       run: docker build -t ci-cd-app .
 
-    # 8. Run container (FIXED PORT)
+    # 8. Run container
     - name: Run Docker Container
       run: docker run -d -p 3001:3000 ci-cd-app
 
-    # 9. Stop container (FIXED NAME)
+    # 9. Stop container
     - name: Stop container
       run: docker ps -q --filter ancestor=ci-cd-app | xargs docker stop || true

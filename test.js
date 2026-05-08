@@ -4,7 +4,7 @@ function testAPI() {
     return new Promise((resolve, reject) => {
 
         const options = {
-            hostname: 'localhost',
+            hostname: '127.0.0.1',  // ✅ FIX: use IPv4 explicitly, not localhost
             port: 3000,
             path: '/api/tasks',
             method: 'GET'
